@@ -22,3 +22,28 @@
 
 </body>
 </html>
+<h2>Bình luận</h2>
+
+<textarea id="comment" rows="4" cols="50"
+placeholder="Nhập bình luận của bạn..."></textarea>
+
+<br><br>
+
+<button onclick="themBinhLuan()">Gửi bình luận</button>
+
+<div id="danhSachBinhLuan"></div>
+
+<script>
+function themBinhLuan() {
+    let comment = document.getElementById("comment").value;
+
+    if(comment.trim() !== "") {
+        let p = document.createElement("p");
+        p.innerText = comment;
+
+        document.getElementById("danhSachBinhLuan").appendChild(p);
+
+        document.getElementById("comment").value = "";
+    }
+}
+</script>
