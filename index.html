@@ -2,53 +2,131 @@
 <html>
 <head>
     <title>Alibabashop73315</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #f5f5f5;
+        }
+
+        img {
+            border-radius: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: orange;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: darkorange;
+        }
+
+        .comment {
+            background: white;
+            padding: 8px;
+            margin: 5px;
+            border-radius: 5px;
+            display: inline-block;
+            min-width: 200px;
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>🛒 Alibabashop73315</h1>
+<h1>🛒 Alibabashop73315</h1>
 
-    <img src="https://images-na.ssl-images-amazon.com/images/I/41yiWNK-pCL._SL500_._AC_SL500_.jpg"
-         alt="Sổ tay tử thần"
-         width="300">
+<img src="https://images-na.ssl-images-amazon.com/images/I/41yiWNK-pCL._SL500_._AC_SL500_.jpg"
+     width="300">
 
-    <h2>Sổ tay tử thần</h2>
-    <p>Giá: 70.000đ</p>
+<h2>Sổ tay tử thần</h2>
+<p>Giá: 70.000đ</p>
 
-    <button onclick="muaHang()">Mua ngay</button>
+<button onclick="muaHang()">Mua ngay</button>
 
-    <script>
-        function muaHang() {
-            alert("Cảm ơn bạn! Hãy liên hệ Zalo để đặt hàng.");
-        }
-    </script>
+<hr>
 
-    <hr>
+<h2>Bình luận</h2>
 
-    <h2>Bình luận</h2>
+<textarea id="comment" rows="4" cols="50" placeholder="Nhập bình luận..."></textarea>
+<br>
+<button onclick="themBinhLuan()">Gửi</button>
 
-    <textarea id="comment" rows="4" cols="50"
-    placeholder="Nhập bình luận của bạn..."></textarea>
+<div id="danhSachBinhLuan"></div>
 
-    <br><br>
+<script>
+let comments = JSON.parse(localStorage.getItem("comments")) || [];
 
-    <button onclick="themBinhLuan()">Gửi bình luận</button>
+// load khi mở trang
+window.onload = function() {
+    renderComments();
+};
 
-    <div id="danhSachBinhLuan"></div>
+function saveComments() {
+    localStorage.setItem("comments", JSON.stringify(comments));
+}
 
-    <script>
-    function themBinhLuan() {
-        let comment = document.getElementById("comment").value;
+function renderComments() {
+    let box = document.getElementById("danhSachBinhLuan");
+    box.innerHTML = "";
 
-        if(comment.trim() !== "") {
-            let p = document.createElement("p");
-            p.innerText = comment;
+    comments.forEach((c, index) => {
+        let div = document.createElement("div");
+        div.className = "comment";
+        div.innerText = c.text;
 
-            document.getElementById("danhSachBinhLuan").appendChild(p);
+        // nhấn giữ để xóa
+        let holdTimer;
 
-            document.getElementById("comment").value = "";
-        }
+        div.addEventListener("mousedown", () => {
+            holdTimer = setTimeout(() => {
+                if(confirm("Xóa bình luận này?")) {
+                    comments.splice(index, 1);
+                    saveComments();
+                    renderComments();
+                }
+            }, 800); // giữ 0.8 giây
+        });
+
+        div.addEventListener("mouseup", () => {
+            clearTimeout(holdTimer);
+        });
+
+        div.addEventListener("mouseleave", () => {
+            clearTimeout(holdTimer);
+        });
+
+        box.appendChild(div);
+    });
+}
+
+function themBinhLuan() {
+    let input = document.getElementById("comment");
+    let text = input.value;
+
+    if(text.trim() === "") {
+        alert("Vui lòng nhập bình luận!");
+        return;
     }
-    </script>
+
+    comments.push({ text: text });
+    saveComments();
+    renderComments();
+
+    input.value = "";
+}
+
+function muaHang() {
+    if(confirm("Bạn muốn mua sản phẩm này?")) {
+        alert("Cảm ơn bạn!");
+    }
+}
+</script>
 
 </body>
 </html>
