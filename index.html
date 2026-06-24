@@ -32,7 +32,21 @@
             margin: 5px;
             border-radius: 5px;
             display: inline-block;
-            min-width: 200px;
+            min-width: 250px;
+        }
+
+        .delete-btn {
+            margin-left: 10px;
+            background: red;
+            color: white;
+            padding: 5px 8px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .delete-btn:hover {
+            background: darkred;
         }
     </style>
 </head>
@@ -55,14 +69,15 @@
 
 <textarea id="comment" rows="4" cols="50" placeholder="Nhập bình luận..."></textarea>
 <br>
+
 <button onclick="themBinhLuan()">Gửi</button>
+<button onclick="xoaTatCa()">Xóa tất cả bình luận</button>
 
 <div id="danhSachBinhLuan"></div>
 
 <script>
 let comments = JSON.parse(localStorage.getItem("comments")) || [];
 
-// load khi mở trang
 window.onload = function() {
     renderComments();
 };
@@ -78,28 +93,24 @@ function renderComments() {
     comments.forEach((c, index) => {
         let div = document.createElement("div");
         div.className = "comment";
-        div.innerText = c.text;
 
-        // nhấn giữ để xóa
-        let holdTimer;
+        let text = document.createElement("span");
+        text.innerText = c.text;
 
-        div.addEventListener("mousedown", () => {
-            holdTimer = setTimeout(() => {
-                if(confirm("Xóa bình luận này?")) {
-                    comments.splice(index, 1);
-                    saveComments();
-                    renderComments();
-                }
-            }, 800); // giữ 0.8 giây
-        });
+        let del = document.createElement("button");
+        del.innerText = "Xóa";
+        del.className = "delete-btn";
 
-        div.addEventListener("mouseup", () => {
-            clearTimeout(holdTimer);
-        });
+        del.onclick = function() {
+            if(confirm("Xóa bình luận này?")) {
+                comments.splice(index, 1);
+                saveComments();
+                renderComments();
+            }
+        };
 
-        div.addEventListener("mouseleave", () => {
-            clearTimeout(holdTimer);
-        });
+        div.appendChild(text);
+        div.appendChild(del);
 
         box.appendChild(div);
     });
@@ -119,6 +130,14 @@ function themBinhLuan() {
     renderComments();
 
     input.value = "";
+}
+
+function xoaTatCa() {
+    if(confirm("Bạn có chắc muốn xóa tất cả bình luận không?")) {
+        comments = [];
+        localStorage.removeItem("comments");
+        renderComments();
+    }
 }
 
 function muaHang() {
