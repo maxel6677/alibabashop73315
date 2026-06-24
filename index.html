@@ -7,7 +7,9 @@
 
     <h1>🛒 Alibabashop73315</h1>
 
-    <img src="https://via.placeholder.com/200" alt="Sản phẩm">
+    <img src="https://images-na.ssl-images-amazon.com/images/I/41yiWNK-pCL._SL500_._AC_SL500_.jpg"
+         alt="Sổ tay tử thần"
+         width="300">
 
     <h2>Sổ tay tử thần</h2>
     <p>Giá: 70.000đ</p>
@@ -20,30 +22,33 @@
         }
     </script>
 
+    <hr>
+
+    <h2>Bình luận</h2>
+
+    <textarea id="comment" rows="4" cols="50"
+    placeholder="Nhập bình luận của bạn..."></textarea>
+
+    <br><br>
+
+    <button onclick="themBinhLuan()">Gửi bình luận</button>
+
+    <div id="danhSachBinhLuan"></div>
+
+    <script>
+    function themBinhLuan() {
+        let comment = document.getElementById("comment").value;
+
+        if(comment.trim() !== "") {
+            let p = document.createElement("p");
+            p.innerText = comment;
+
+            document.getElementById("danhSachBinhLuan").appendChild(p);
+
+            document.getElementById("comment").value = "";
+        }
+    }
+    </script>
+
 </body>
 </html>
-<h2>Bình luận</h2>
-
-<textarea id="comment" rows="4" cols="50"
-placeholder="Nhập bình luận của bạn..."></textarea>
-
-<br><br>
-
-<button onclick="themBinhLuan()">Gửi bình luận</button>
-
-<div id="danhSachBinhLuan"></div>
-
-<script>
-function themBinhLuan() {
-    let comment = document.getElementById("comment").value;
-
-    if(comment.trim() !== "") {
-        let p = document.createElement("p");
-        p.innerText = comment;
-
-        document.getElementById("danhSachBinhLuan").appendChild(p);
-
-        document.getElementById("comment").value = "";
-    }
-}
-</script>
