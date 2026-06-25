@@ -50,7 +50,16 @@ function muaHang() {
     window.location.href =
     "sms:0344851779?body=Tôi muốn mua Sổ tay tử thần giá 70.000đ";
 }
+function toggleMenu() {
+let menu = document.getElementById("menu");
 
+if(menu.style.display === "none") {
+    menu.style.display = "block";
+} else {
+    menu.style.display = "none";
+}
+
+}
 function themBinhLuan() {
     let input = document.getElementById("comment");
     let text = input.value.trim();
