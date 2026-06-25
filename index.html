@@ -28,6 +28,7 @@ button{
 button:hover{
     background:#0056b3;
 }
+
 #comment{
     width:300px;
     height:80px;
@@ -40,26 +41,35 @@ button:hover{
     width:300px;
     border-radius:5px;
 }
-</style></head><body><h1>🛒 Alibabashop73315</h1><img src="https://images-na.ssl-images-amazon.com/images/I/41yiWNK-pCL._SL500_._AC_SL500_.jpg"><h2>Sổ tay tử thần</h2>
-<p>Giá: 70.000đ</p><button onclick="muaHang()">Mua ngay</button>
+</style></head><body><button onclick="toggleMenu()">☰ Menu</button>
+
+<div id="menu" style="display:none; margin-bottom:15px;">
+    <button>🏠 Trang chủ</button><br>
+    <button>🛒 Sản phẩm</button><br>
+    <button>💬 Bình luận</button><br>
+    <button>📞 Liên hệ</button><br>
+    <button>⚙️ Cài đặt</button>
+</div><h1>🛒 Alibabashop73315</h1><img src="https://images-na.ssl-images-amazon.com/images/I/41yiWNK-pCL._SL500_._AC_SL500_.jpg"><h2>Sổ tay tử thần</h2><p>Giá: 70.000đ</p><button onclick="muaHang()">Mua ngay</button>
 
 <hr><h2>Bình luận</h2><textarea id="comment" placeholder="Nhập bình luận..."></textarea><br><button onclick="themBinhLuan()">Gửi</button>
 
 <div id="danhSachBinhLuan"></div><script>
+
 function muaHang() {
     window.location.href =
     "sms:0344851779?body=Tôi muốn mua Sổ tay tử thần giá 70.000đ";
 }
+
 function toggleMenu() {
-let menu = document.getElementById("menu");
+    let menu = document.getElementById("menu");
 
-if(menu.style.display === "none") {
-    menu.style.display = "block";
-} else {
-    menu.style.display = "none";
+    if(menu.style.display === "none") {
+        menu.style.display = "block";
+    } else {
+        menu.style.display = "none";
+    }
 }
 
-}
 function themBinhLuan() {
     let input = document.getElementById("comment");
     let text = input.value.trim();
@@ -78,5 +88,6 @@ function themBinhLuan() {
 
     input.value = "";
 }
+
 </script></body>
 </html>
