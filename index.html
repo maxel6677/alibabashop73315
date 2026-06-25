@@ -92,43 +92,26 @@ function toggleMenu() {
     }
 }
 
-
 function themBinhLuan() {
-let input = document.getElementById("comment");
-let text = input.value.trim();
+    let input = document.getElementById("comment");
+    let text = input.value.trim();
 
-if(text === "") {
-    alert("Vui lòng nhập bình luận!");
-    return;
-}
+    if(text === "") {
+        alert("Vui lòng nhập bình luận!");
+        return;
+    }
 
-let binhLuan = JSON.parse(localStorage.getItem("binhLuan")) || [];
-
-binhLuan.push(text);
-
-localStorage.setItem("binhLuan", JSON.stringify(binhLuan));
-
-hienThiBinhLuan();
-
-input.value = "";
-
-}
-
-function hienThiBinhLuan() {
-let danhSach = document.getElementById("danhSachBinhLuan");
-
-danhSach.innerHTML = "";
-
-let binhLuan = JSON.parse(localStorage.getItem("binhLuan")) || [];
-
-for(let i = 0; i < binhLuan.length; i++) {
     let div = document.createElement("div");
     div.className = "comment";
-    div.innerText = binhLuan[i];
+    div.innerText = text;
 
-    danhSach.appendChild(div);
+    document.getElementById("danhSachBinhLuan")
+            .appendChild(div);
+
+    input.value = "";
 }
 
-}
+</script>
 
-window.onload = hienThiBinhLuan;
+</body>
+</html>
