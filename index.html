@@ -47,10 +47,27 @@ button:hover{
     <button>🏠 Trang chủ</button><br>
     <button>🛒 Sản phẩm</button><br>
     <button>💬 Bình luận</button><br>
-    <button onclick="goiDien()">📞 Liên hệ</button>
+   <button onclick="goiDien()">📞 Liên hệ</button>
+
 <script>
+let dangCho = false;
+
 function goiDien() {
+
+    if (dangCho) {
+        alert("⏳ Vui lòng đợi 5 giây rồi thử lại.");
+        return;
+    }
+
+    dangCho = true;
+
+    alert("📞 Đang mở ứng dụng gọi điện. Sau khi bấm, hãy đợi 5 giây trước khi bấm lại.");
+
     window.location.href = "tel:0344851779";
+
+    setTimeout(function() {
+        dangCho = false;
+    }, 5000);
 }
 </script>
     <button>⚙️ Cài đặt</button>
