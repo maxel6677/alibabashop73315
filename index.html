@@ -22,15 +22,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.onload = function () {
+window.addEventListener("load", () => {
     taiBinhLuan();
-};
+});
 
 window.themBinhLuan = async function () {
-    let input = document.getElementById("comment");
-    let text = input.value;
+    const input = document.getElementById("comment");
+    const text = input.value.trim();
 
-    if (text.trim() === "") {
+    if (!text) {
         alert("Vui lòng nhập bình luận!");
         return;
     }
@@ -44,26 +44,25 @@ window.themBinhLuan = async function () {
 };
 
 async function taiBinhLuan() {
-    let box = document.getElementById("danhSachBinhLuan");
+    const box = document.getElementById("danhSachBinhLuan");
     box.innerHTML = "";
 
     const snapshot = await getDocs(collection(db, "comments"));
 
     snapshot.forEach((item) => {
-
         const data = item.data();
 
-        let div = document.createElement("div");
+        const div = document.createElement("div");
         div.className = "comment";
 
-        let text = document.createElement("span");
+        const text = document.createElement("span");
         text.innerText = data.text;
 
-        let btn = document.createElement("button");
+        const btn = document.createElement("button");
         btn.innerText = "Xóa";
         btn.className = "delete-btn";
 
-        btn.onclick = async function () {
+        btn.onclick = async () => {
             if (confirm("Xóa bình luận này?")) {
                 await deleteDoc(doc(db, "comments", item.id));
                 taiBinhLuan();
@@ -72,13 +71,11 @@ async function taiBinhLuan() {
 
         div.appendChild(text);
         div.appendChild(btn);
-
         box.appendChild(div);
     });
 }
 
 window.xoaTatCa = async function () {
-
     if (!confirm("Xóa tất cả bình luận?")) return;
 
     const snapshot = await getDocs(collection(db, "comments"));
@@ -96,154 +93,3 @@ window.muaHang = function () {
     }
 };
 </script>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Alibabashop73315</title>
-
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            background: #f5f5f5;
-        }
-
-        img {
-            border-radius: 10px;
-        }
-
-        button {
-            padding: 10px 15px;
-            background: orange;
-            border: none;
-            cursor: pointer;
-            margin: 5px;
-        }
-
-        button:hover {
-            background: darkorange;
-        }
-
-        .comment {
-            background: white;
-            padding: 8px;
-            margin: 5px;
-            border-radius: 5px;
-            display: inline-block;
-            min-width: 250px;
-        }
-
-        .delete-btn {
-            margin-left: 10px;
-            background: red;
-            color: white;
-            padding: 5px 8px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .delete-btn:hover {
-            background: darkred;
-        }
-    </style>
-</head>
-
-<body>
-
-<h1>🛒 Alibabashop73315</h1>
-
-<img src="https://images-na.ssl-images-amazon.com/images/I/41yiWNK-pCL._SL500_._AC_SL500_.jpg"
-     width="300">
-
-<h2>Sổ tay tử thần</h2>
-<p>Giá: 70.000đ</p>
-
-<button onclick="muaHang()">Mua ngay</button>
-
-<hr>
-
-<h2>Bình luận</h2>
-
-<textarea id="comment" rows="4" cols="50" placeholder="Nhập bình luận..."></textarea>
-<br>
-
-<button onclick="themBinhLuan()">Gửi</button>
-<button onclick="xoaTatCa()">Xóa tất cả bình luận</button>
-
-<div id="danhSachBinhLuan"></div>
-
-<script>
-let comments = JSON.parse(localStorage.getItem("comments")) || [];
-
-window.onload = function() {
-    renderComments();
-};
-
-function saveComments() {
-    localStorage.setItem("comments", JSON.stringify(comments));
-}
-
-function renderComments() {
-    let box = document.getElementById("danhSachBinhLuan");
-    box.innerHTML = "";
-
-    comments.forEach((c, index) => {
-        let div = document.createElement("div");
-        div.className = "comment";
-
-        let text = document.createElement("span");
-        text.innerText = c.text;
-
-        let del = document.createElement("button");
-        del.innerText = "Xóa";
-        del.className = "delete-btn";
-
-        del.onclick = function() {
-            if(confirm("Xóa bình luận này?")) {
-                comments.splice(index, 1);
-                saveComments();
-                renderComments();
-            }
-        };
-
-        div.appendChild(text);
-        div.appendChild(del);
-
-        box.appendChild(div);
-    });
-}
-
-function themBinhLuan() {
-    let input = document.getElementById("comment");
-    let text = input.value;
-
-    if(text.trim() === "") {
-        alert("Vui lòng nhập bình luận!");
-        return;
-    }
-
-    comments.push({ text: text });
-    saveComments();
-    renderComments();
-
-    input.value = "";
-}
-
-function xoaTatCa() {
-    if(confirm("Bạn có chắc muốn xóa tất cả bình luận không?")) {
-        comments = [];
-        localStorage.removeItem("comments");
-        renderComments();
-    }
-}
-
-function muaHang() {
-    if(confirm("Bạn muốn mua sản phẩm này?")) {
-        alert("Cảm ơn bạn!");
-    }
-}
-</script>
-
-</body>
-</html>
