@@ -141,5 +141,67 @@ window.dangNhapGoogle = function () {
     signInWithRedirect(auth, provider);
 };
 </script>
+<button onclick="dangXuat()">
+🚪 Đăng xuất
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  getRedirectResult,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBeiC8mBiJo5-NJ5Df4oBZSkDzCr3kmEAc",
+  authDomain: "project-3470863119146495393.firebaseapp.com",
+  projectId: "project-3470863119146495393",
+  storageBucket: "project-3470863119146495393.firebasestorage.app",
+  messagingSenderId: "965754888527",
+  appId: "1:965754888527:web:5f2c0dd25ec20c4da3653a",
+  measurementId: "G-DHW01RTG4M"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// Nút đăng nhập
+window.dangNhapGoogle = function () {
+    signInWithRedirect(auth, provider);
+};
+
+// Sau khi đăng nhập quay lại
+getRedirectResult(auth)
+.then((result) => {
+    if (result && result.user) {
+        alert("Đăng nhập thành công!");
+        window.location.href = "index.html";
+    }
+})
+.catch((error) => {
+    alert(error.code + "\n" + error.message);
+});
+
+// Nếu đã đăng nhập thì tự chuyển
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        window.location.href = "index.html";
+    }
+});
+
+// Nút đăng xuất
+window.dangXuat = function () {
+    signOut(auth).then(() => {
+        alert("Đã đăng xuất!");
+    });
+};
+</script>
+
+</button>
 </body>
 </html>
+
