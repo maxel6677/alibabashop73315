@@ -127,6 +127,26 @@ function themBinhLuan() {
 }
 
 </script>
+<script type="module">
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBeiC8mBiJo5-NJ5Df4oBZSkDzCr3kmEAc",
+  authDomain: "project-3470863119146495393.firebaseapp.com",
+  projectId: "project-3470863119146495393",
+  storageBucket: "project-3470863119146495393.firebasestorage.app",
+  messagingSenderId: "965754888527",
+  appId: "1:965754888527:web:5f2c0dd25ec20c4da3653a",
+  measurementId: "G-DHW01RTG4M"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+console.log("Firebase đã kết nối thành công!");
+
+</script>
 </body>
 </html>
