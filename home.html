@@ -1,1 +1,103 @@
-<p>Trang Chủ</p>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng ký</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f5f5;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    background:white;
+    width:320px;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+    text-align:center;
+}
+
+input{
+    width:90%;
+    padding:10px;
+    margin:8px 0;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+button{
+    width:95%;
+    padding:10px;
+    margin-top:10px;
+    border:none;
+    background:#007BFF;
+    color:white;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+a{
+    color:#007BFF;
+    text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>📝 Đăng ký tài khoản</h2>
+
+<input type="text" id="ten" placeholder="Tên người dùng">
+
+<input type="email" id="email" placeholder="Email">
+
+<input type="password" id="password" placeholder="Mật khẩu">
+
+<input type="password" id="password2" placeholder="Nhập lại mật khẩu">
+
+<button onclick="dangKy()">Đăng ký</button>
+
+<p>Đã có tài khoản?</p>
+
+<button onclick="window.location.href='login.html'">
+Đăng nhập
+</button>
+
+</div>
+
+<script>
+
+function dangKy(){
+
+let mk=document.getElementById("password").value;
+let mk2=document.getElementById("password2").value;
+
+if(mk!=mk2){
+alert("Hai mật khẩu không giống nhau!");
+return;
+}
+
+alert("Đăng ký thành công! (Sau này sẽ lưu bằng Firebase)");
+
+window.location.href="login.html";
+
+}
+
+</script>
+
+</body>
+</html>
