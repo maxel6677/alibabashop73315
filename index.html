@@ -52,7 +52,12 @@ button:hover{
 </style></head><body><button onclick="toggleMenu()">☰ Menu</button>
 
 <div id="menu" style="display:none; margin-bottom:15px;">
-    <button>🏠 Trang chủ</button><br>
+    <button onclick="trangChu()">🏠 Trang chủ</button>
+<script>
+function trangChu() {
+    window.location.href = "home.html";
+}
+</script>
     <button>🛒 Sản phẩm</button><br>
     <button>💬 Bình luận</button><br>
    <button onclick="goiDien()">📞 Liên hệ</button>
