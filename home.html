@@ -121,7 +121,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-
 getRedirectResult(auth)
 .then((result) => {
     if (result && result.user) {
@@ -130,12 +129,12 @@ getRedirectResult(auth)
     }
 })
 .catch((error) => {
-    console.log(error);
+    alert(error.message);
 });
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        console.log("Xin chào:", user.displayName);
+        window.location.href = "index.html";
     }
 });
 window.dangNhapGoogle = function () {
