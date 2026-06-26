@@ -134,7 +134,7 @@ getRedirectResult(auth)
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        window.location.href = "index.html";
+        console.log("Đã đăng nhập:", user.displayName);
     }
 });
 window.dangNhapGoogle = function () {
