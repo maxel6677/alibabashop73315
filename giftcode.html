@@ -1,1 +1,17 @@
 <h2>🔐Gift Code</h2>
+<h3>Nhập Gift Code</h3>
+
+<input type="text" id="giftcode" placeholder="Nhập code...">
+
+<button onclick="kiemTraCode()">Xác nhận</button>
+<script>
+function kiemTraCode() {
+    let code = document.getElementById("giftcode").value;
+
+    if (code === "alibaba210") {
+        window.location.href = "index02.html";
+    } else {
+        alert("Sai gift code!");
+    }
+}
+</script>
