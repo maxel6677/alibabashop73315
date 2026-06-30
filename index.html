@@ -158,7 +158,10 @@ document.getElementById("danhSachBinhLuan")
 input.value = "";
 
 }
-let xu = 0;
+let xu = localStorage.getItem("xu");
+xu = xu ? parseInt(xu) : 0;
+
+updateXu();
 
 function updateXu() {
     document.getElementById("xuText").innerText = xu;
@@ -166,6 +169,7 @@ function updateXu() {
 
 function addXu(amount) {
     xu += amount;
+    localStorage.setItem("xu", xu);
     updateXu();
 }
 </script>
