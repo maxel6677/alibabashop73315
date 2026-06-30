@@ -88,7 +88,7 @@ function giftCode () {
 }  
 </script>  
 </div><h1>Alibabashop73315</h1>
-
+<h3>🪙 Xu: <span id="xuText">0</span></h3>
 <img src="https://images-na.ssl-images-amazon.com/images/I/41yiWNK-pCL._SL500_._AC_SL500_.jpg">  
 <h2>Sổ tay tử thần ( Hiệu Quả 100% - Phiên Bản Giới Hạn)</h2>
 
@@ -158,7 +158,16 @@ document.getElementById("danhSachBinhLuan")
 input.value = "";
 
 }
+let xu = 0;
 
+function updateXu() {
+    document.getElementById("xuText").innerText = xu;
+}
+
+function addXu(amount) {
+    xu += amount;
+    updateXu();
+}
 </script>
   </body>  
 </html>
