@@ -111,6 +111,33 @@ function toggleMenu() {
         menu.style.display = "none";
     }
 }
+<script>
+
+function muaHang() {
+    window.location.href =
+    "sms:0344851779?body=Tôi muốn mua Sổ tay tử thần giá 70.000đ";
+}
+
+function toggleMenu() {
+    let menu = document.getElementById("menu");
+
+    menu.style.display = (menu.style.display === "none") ? "block" : "none";
+}
+
+/* ===== BÌNH LUẬN LOCALSTORAGE ===== */
+
+function loadBinhLuan() {
+    let list = JSON.parse(localStorage.getItem("comments")) || [];
+    let container = document.getElementById("danhSachBinhLuan");
+    container.innerHTML = "";
+
+    list.forEach(text => {
+        let div = document.createElement("div");
+        div.className = "comment";
+        div.innerText = text;
+        container.appendChild(div);
+    });
+}
 
 function themBinhLuan() {
     let input = document.getElementById("comment");
@@ -121,17 +148,18 @@ function themBinhLuan() {
         return;
     }
 
-    let div = document.createElement("div");
-    div.className = "comment";
-    div.innerText = text;
+    let list = JSON.parse(localStorage.getItem("comments")) || [];
+    list.push(text);
 
-    document.getElementById("danhSachBinhLuan")
-            .appendChild(div);
+    localStorage.setItem("comments", JSON.stringify(list));
 
     input.value = "";
+    loadBinhLuan();
 }
 
-</script>
+// chạy khi mở trang
+loadBinhLuan();
 
+</script>
 </body>
 </html>
