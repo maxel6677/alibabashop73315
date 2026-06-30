@@ -124,7 +124,7 @@ const provider = new GoogleAuthProvider();
 getRedirectResult(auth)
 .then((result) => {
     if (result && result.user) {
-        alert("Đăng nhập thành công!");
+        alert("Đăng nhập không thành công!");
         window.location.href = "index.html";
     }
 })
