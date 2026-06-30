@@ -1,17 +1,51 @@
-<h2>🔐Gift Code</h2>
+<h2 style="text-align:center;">🔐 Gift Code</h2>
 
-<h3>Nhập Gift Code</h3>
-<input type="text" id="giftcode" placeholder="Nhập code...">
+<div style="text-align:center; margin-top:20px;">
 
-<button onclick="kiemTraCode()">Xác nhận</button>
+    <h3>Nhập Gift Code</h3>
+
+    <input type="text" id="giftcode" placeholder="Nhập code...">
+
+    <br><br>
+
+    <button onclick="kiemTraCode()">Xác nhận</button>
+
+</div>
+
 <script>
 function kiemTraCode() {
-    let code = document.getElementById("giftcode").value;
+    let code = document.getElementById("giftcode").value.trim();
 
     if (code === "alibaba210") {
         window.location.href = "index02.html";
     } else {
-        alert("Sai gift code!");
+        alert("❌ Sai gift code!");
     }
 }
 </script>
+
+<style>
+#giftcode {
+    width: 80%;
+    max-width: 300px;
+    height: 40px;
+    font-size: 16px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    background: #007BFF;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+</style>
