@@ -45,6 +45,33 @@ margin:5px auto;
 width:300px;
 border-radius:5px;
 }
+.search-bar {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+#searchBox {
+    width: 90%;
+    max-width: 400px;
+    padding: 12px 15px;
+
+    border: 1px solid #ddd;
+    border-radius: 25px;
+
+    font-size: 16px;
+    outline: none;
+
+    background: white;
+
+    transition: 0.2s;
+}
+
+/* khi bấm vào ô */
+#searchBox:focus {
+    border-color: #ee4d2d;
+    box-shadow: 0 0 8px rgba(238, 77, 45, 0.3);
+}
 </style></head><body><button onclick="toggleMenu()">☰ Menu</button>
 
 <div id="menu" style="display:none; margin-bottom:15px;">  
@@ -138,4 +165,4 @@ input.value = "";
 }
 
 </script>  </body>  
-</html>
+</html>j
