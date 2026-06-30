@@ -164,5 +164,25 @@ input.value = "";
 
 }
 
-</script>  </body>  
+</script>
+function timSanPham() {
+    let value = document.getElementById("searchBox").value.toLowerCase();
+    let h2List = document.querySelectorAll("h2");
+
+    h2List.forEach(h2 => {
+        let text = h2.innerText.toLowerCase();
+
+        if (text.includes(value)) {
+            h2.style.display = "block";
+            if (h2.previousElementSibling)
+                h2.previousElementSibling.style.display = "block";
+        } else {
+            h2.style.display = "none";
+            if (h2.previousElementSibling)
+                h2.previousElementSibling.style.display = "none";
+        }
+    });
+}
+
+  </body>  
 </html>j
