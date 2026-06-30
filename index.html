@@ -50,28 +50,6 @@ border-radius:5px;
     justify-content: center;
     margin: 10px 0;
 }
-
-#searchBox {
-    width: 90%;
-    max-width: 400px;
-    padding: 12px 15px;
-
-    border: 1px solid #ddd;
-    border-radius: 25px;
-
-    font-size: 16px;
-    outline: none;
-
-    background: white;
-
-    transition: 0.2s;
-}
-
-/* khi bấm vào ô */
-#searchBox:focus {
-    border-color: #ee4d2d;
-    box-shadow: 0 0 8px rgba(238, 77, 45, 0.3);
-}
 </style></head><body><button onclick="toggleMenu()">☰ Menu</button>
 
 <div id="menu" style="display:none; margin-bottom:15px;">  
@@ -165,24 +143,5 @@ input.value = "";
 }
 
 </script>
-function timSanPham() {
-    let value = document.getElementById("searchBox").value.toLowerCase();
-    let h2List = document.querySelectorAll("h2");
-
-    h2List.forEach(h2 => {
-        let text = h2.innerText.toLowerCase();
-
-        if (text.includes(value)) {
-            h2.style.display = "block";
-            if (h2.previousElementSibling)
-                h2.previousElementSibling.style.display = "block";
-        } else {
-            h2.style.display = "none";
-            if (h2.previousElementSibling)
-                h2.previousElementSibling.style.display = "none";
-        }
-    });
-}
-
   </body>  
 </html>
