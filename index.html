@@ -138,28 +138,50 @@ function loadBinhLuan() {
         container.appendChild(div);
     });
 }
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-function themBinhLuan() {
-    let input = document.getElementById("comment");
-    let text = input.value.trim();
+    function loadBinhLuan() {
+        let list = JSON.parse(localStorage.getItem("comments")) || [];
+        let container = document.getElementById("danhSachBinhLuan");
 
-    if(text === "") {
-        alert("Vui lòng nhập bình luận!");
-        return;
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        list.forEach(text => {
+            let div = document.createElement("div");
+            div.className = "comment";
+            div.innerText = text;
+            container.appendChild(div);
+        });
     }
 
-    let list = JSON.parse(localStorage.getItem("comments")) || [];
-    list.push(text);
+    function themBinhLuan() {
+        let input = document.getElementById("comment");
+        let text = input.value.trim();
 
-    localStorage.setItem("comments", JSON.stringify(list));
+        if (text === "") {
+            alert("Vui lòng nhập bình luận!");
+            return;
+        }
 
-    input.value = "";
+        let list = JSON.parse(localStorage.getItem("comments")) || [];
+        list.push(text);
+
+        localStorage.setItem("comments", JSON.stringify(list));
+
+        input.value = "";
+
+        loadBinhLuan();
+    }
+
+    // gắn hàm ra ngoài để HTML gọi được
+    window.themBinhLuan = themBinhLuan;
+
     loadBinhLuan();
-}
 
-// chạy khi mở trang
-loadBinhLuan();
-
+});
 </script>
 </body>
 </html>
