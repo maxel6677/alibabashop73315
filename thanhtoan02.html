@@ -22,9 +22,30 @@ input, select {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
+  box-sizing: border-box;
 }
 
-button {
+/* Khung chứa ô địa chỉ và nút bản đồ */
+.diachi-container {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+.diachi-container input {
+  margin-top: 0;
+  flex: 1;
+}
+.btn-map {
+  padding: 10px;
+  background: #4285F4;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+button.btn-submit {
   width: 100%;
   padding: 12px;
   background: green;
@@ -35,8 +56,39 @@ button {
   border-radius: 8px;
 }
 
-button:hover {
+button.btn-submit:hover {
   background: darkgreen;
+}
+
+/* Cấu hình cửa sổ Bản đồ ẩn/hiện */
+#mapModal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+  background-color: white;
+  margin: 10% auto;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 10px;
+}
+#map {
+  width: 100%;
+  height: 300px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+}
+.modal-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
 }
 </style>
 </head>
@@ -49,7 +101,11 @@ button:hover {
   <h3>📍 Thông tin nhận hàng</h3>
   <input id="ten" placeholder="Tên người nhận">
   <input id="sdt" placeholder="Số điện thoại">
-  <input id="diachi" placeholder="Địa chỉ">
+  
+  <div class="diachi-container">
+    <input id="diachi" placeholder="Địa chỉ hoặc Tọa độ nhận hàng">
+    <button type="button" class="btn-map" onclick="moBanDo()">📍 Chọn từ bản đồ</button>
+  </div>
 </div>
 
 <div class="box">
@@ -84,28 +140,91 @@ button:hover {
   <p id="totalText">Đang tính...</p>
 </div>
 
-<button onclick="datHang()">ĐẶT HÀNG</button>
+<button class="btn-submit" onclick="datHang()">ĐẶT HÀNG</button>
+
+<div id="mapModal">
+  <div class="modal-content">
+    <h4>Chọn vị trí giao hàng</h4>
+    <p style="font-size:12px; color:gray;">Di chuyển bản đồ và bấm chọn vị trí chính xác của bạn.</p>
+    <div id="map"></div>
+    <div class="modal-buttons">
+      <button onclick="xacNhanToaDo()" style="background:green; color:white; padding:10px; flex:1; border:none; border-radius:5px;">Xác nhận</button>
+      <button onclick="dongBanDo()" style="background:red; color:white; padding:10px; flex:1; border:none; border-radius:5px;">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBcSBjapfcWVB9Hrl_A03LCoCvMIQFhnY&callback=initMap" async defer></script>
 
 <script>
 const gia = 2500000;
+let map;
+let marker;
+let selectedCoords = "";
+
+// Khởi tạo bản đồ mặc định lấy vị trí Việt Nam
+function initMap() {
+  const defaultLoc = { lat: 10.762622, lng: 106.660172 }; // Tọa độ TP.HCM làm mẫu
+  map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 13,
+    center: defaultLoc,
+  });
+
+  marker = new google.maps.Marker({
+    position: defaultLoc,
+    map: map,
+    draggable: true // Cho phép kéo thả ghim
+  });
+
+  // Sự kiện khi click vào một điểm trên bản đồ
+  google.maps.event.addListener(map, 'click', function(event) {
+    marker.setPosition(event.latLng);
+    luuToaDo(event.latLng);
+  });
+
+  // Sự kiện khi kéo thả ghim
+  google.maps.event.addListener(marker, 'dragend', function(event) {
+    luuToaDo(event.latLng);
+  });
+}
+
+function luuToaDo(latLng) {
+  selectedCoords = latLng.lat().toFixed(6) + ", " + latLng.lng().toFixed(6);
+}
+
+function moBanDo() {
+  document.getElementById("mapModal").style.display = "block";
+  // Kích hoạt lại kích thước map khi mở popup để tránh lỗi hiển thị xám màn hình
+  setTimeout(() => {
+    google.maps.event.trigger(map, 'resize');
+    map.setCenter(marker.getPosition());
+  }, 300);
+}
+
+function dongBanDo() {
+  document.getElementById("mapModal").style.display = "none";
+}
+
+function xacNhanToaDo() {
+  if(selectedCoords === "") {
+    let currentPos = marker.getPosition();
+    selectedCoords = currentPos.lat().toFixed(6) + ", " + currentPos.lng().toFixed(6);
+  }
+  document.getElementById("diachi").value = selectedCoords;
+  dongBanDo();
+}
 
 function tinhTien() {
   let ship = Number(document.getElementById("ship").value);
   let coupon = document.getElementById("coupon").value;
-
   let giamgia = (coupon === "SALE50") ? 50000 : 0;
-
   let tong = gia + ship - giamgia;
-
-  document.getElementById("totalText").innerText =
-    tong.toLocaleString() + " VNĐ";
-
+  document.getElementById("totalText").innerText = tong.toLocaleString() + " VNĐ";
   return {ship, giamgia, tong};
 }
 
 document.getElementById("ship").onchange = tinhTien;
 document.getElementById("coupon").oninput = tinhTien;
-
 tinhTien();
 
 async function datHang() {
@@ -119,7 +238,6 @@ async function datHang() {
   }
 
   let calc = tinhTien();
-
   let data = {
     ten: ten,
     sdt: sdt,
@@ -133,7 +251,6 @@ async function datHang() {
   };
 
   try {
-    // ĐÂY CHÍNH LÀ KHU VỰC ĐƯỢC THAY LINK MỚI VÀ SỬA LỖI ĐƯỜNG TRUYỀN
     let res = await fetch("https://script.google.com/macros/s/AKfycbwoC8H-yRkVyz8cPiMDIecu63KO5-5uzkLvF3wuKJgnlw69pWo3yxQOGOm39fu8JdXt/exec", {
       method: "POST",
       mode: "no-cors",
@@ -144,12 +261,9 @@ async function datHang() {
     });
 
     alert("Đặt hàng thành công!");
-
-    // Xóa form sau khi đặt thành công
     document.getElementById("ten").value = "";
     document.getElementById("sdt").value = "";
     document.getElementById("diachi").value = "";
-
   } catch (err) {
     alert("Lỗi gửi đơn!");
     console.log(err);
