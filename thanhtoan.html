@@ -1,98 +1,304 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Thanh toán</title>
-  <style>
-    body { font-family: Arial; background:#f5f5f5; padding:20px; }
-    .box { background:#fff; padding:15px; margin-bottom:10px; border-radius:8px; }
-    input, select { width:100%; padding:8px; margin-top:5px; }
-    button { padding:10px; width:100%; background:green; color:#fff; border:none; cursor:pointer; }
-    button:hover { background:darkgreen; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thanh toán</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  padding: 15px;
+  margin: 0;
+}
+
+.box {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.diachi-container {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.diachi-container input {
+  margin-top: 0;
+  flex: 1;
+}
+.btn-map {
+  padding: 0 15px;
+  background: #4285F4;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+button.btn-submit {
+  width: 100%;
+  padding: 14px;
+  background: #28a745;
+  color: white;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+/* Khung cửa sổ Bản đồ Popup */
+#mapModal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+  background-color: white;
+  margin: 8% auto;
+  padding: 15px;
+  width: 92%;
+  max-width: 500px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+#map {
+  width: 100%;
+  height: 350px;
+  margin-top: 10px;
+  border-radius: 6px;
+}
+.modal-buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+.modal-buttons button {
+  padding: 12px;
+  flex: 1;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>
 </head>
 
 <body>
 
-<h2>Thanh toán</h2>
+<h2>🧾 Thanh toán đơn hàng</h2>
 
 <div class="box">
-  <h3>Thông tin nhận hàng</h3>
-  <input id="ten" placeholder="Tên">
-  <input id="sdt" placeholder="SĐT">
-  <input id="diachi" placeholder="Địa chỉ">
+  <h3>📍 Thông tin nhận hàng</h3>
+  <input id="ten" placeholder="Tên người nhận">
+  <input id="sdt" placeholder="Số điện thoại">
+  
+  <div class="diachi-container">
+    <input id="diachi" placeholder="Địa chỉ hoặc Tọa độ nhận hàng">
+    <button type="button" class="btn-map" onclick="moBanDo()">📍 Chọn vị trí</button>
+  </div>
 </div>
 
 <div class="box">
-  <h3>Sản phẩm</h3>
-  <p>Tên sản phẩm: Sổ tay tử thần</p>
-  <p>Giá: 70.000 VNĐ</p>
+  <h3>📦 Sản phẩm</h3>
+  <p><b>Sổ tay tử thần</b></p>
+  <p>Giá: 50.000 VNĐ</p>
 </div>
 
 <div class="box">
-  <h3>Vận chuyển</h3>
+  <h3>🚚 Vận chuyển</h3>
   <select id="ship">
-    <option value="30000">Giao tiêu chuẩn - 30.000</option>
-    <option value="50000">Nhanh - 50.000</option>
+    <option value="1000">Tiêu chuẩn - 1.000</option>
+    <option value="3000">Nhanh - 3.000</option>
   </select>
 </div>
 
 <div class="box">
-  <h3>Mã giảm giá</h3>
-  <input id="coupon" placeholder="Nhập mã giảm giá">
+  <h3>🎟 Mã giảm giá</h3>
+  <input id="coupon" placeholder="Nhập mã (SALE50)">
 </div>
 
 <div class="box">
-  <h3>Thanh toán</h3>
+  <h3>💳 Thanh toán</h3>
   <select id="pay">
     <option value="COD">Thanh toán khi nhận hàng</option>
     <option value="BANK">Chuyển khoản</option>
   </select>
 </div>
 
-<button onclick="datHang()">ĐẶT HÀNG</button>
+<div class="box">
+  <h3>💰 Tổng chi phí</h3>
+  <p id="totalText">Đang tính...</p>
+</div>
+
+<button class="btn-submit" onclick="datHang()">ĐẶT HÀNG</button>
+
+<div id="mapModal">
+  <div class="modal-content">
+    <h3 style="margin-top:0; margin-bottom:5px;">📍 Chọn vị trí giao hàng</h3>
+    <p style="font-size:12px; color:gray; margin:0;">Bấm nút lớp ở góc phải để đổi sang bản đồ Vệ tinh .</p>
+    <div id="map"></div>
+    <div class="modal-buttons">
+      <button onclick="xacNhanToaDo()" style="background:green; color:white;">Xác nhận vị trí</button>
+      <button onclick="dongBanDo()" style="background:red; color:white;">Hủy</button>
+    </div>
+  </div>
+</div>
 
 <script>
-async function datHang() {
+const gia = 2500000;
+let map;
+let marker;
+let selectedCoords = "";
 
+function initMap() {
+  const defaultLoc = [10.762622, 106.660172]; // Tọa độ mẫu mặc định
+  
+  // 1. Tạo lớp Bản đồ đường đi thông thường
+  const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap'
+  });
+
+  // 2. Tạo lớp Bản đồ Vệ tinh siêu nét (Esri World Imagery)
+  const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri'
+  });
+
+  // Khởi tạo bản đồ mặc định hiển thị chế độ vệ tinh cho dễ nhìn
+  map = L.map('map', {
+    center: defaultLoc,
+    zoom: 14,
+    layers: [satelliteLayer] // Mặc định mở ra là vệ tinh luôn
+  });
+
+  // Tạo menu nút bấm đổi chế độ ở góc phải
+  const baseMaps = {
+    "🗺️ Bản đồ thường": streetLayer,
+    "🛰️ Bản đồ vệ tinh": satelliteLayer
+  };
+  L.control.layers(baseMaps).addTo(map);
+
+  // Tạo ghim di động
+  marker = L.marker(defaultLoc, { draggable: true }).addTo(map);
+  luuToaDo(defaultLoc[0], defaultLoc[1]);
+
+  // Click chọn điểm mới trên bản đồ
+  map.on('click', function(e) {
+    marker.setLatLng(e.latlng);
+    luuToaDo(e.latlng.lat, e.latlng.lng);
+  });
+
+  // Kéo thả ghim
+  marker.on('dragend', function(e) {
+    let position = marker.getLatLng();
+    luuToaDo(position.lat, position.lng);
+  });
+}
+
+function luuToaDo(lat, lng) {
+  selectedCoords = lat.toFixed(6) + ", " + lng.toFixed(6);
+}
+
+function moBanDo() {
+  document.getElementById("mapModal").style.display = "block";
+  if (!map) {
+    initMap();
+  } else {
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 200);
+  }
+}
+
+function dongBanDo() {
+  document.getElementById("mapModal").style.display = "none";
+}
+
+function xacNhanToaDo() {
+  document.getElementById("diachi").value = selectedCoords;
+  dongBanDo();
+}
+
+function tinhTien() {
+  let ship = Number(document.getElementById("ship").value);
+  let coupon = document.getElementById("coupon").value;
+  let giamgia = (coupon === "SALE50") ? 50000 : 0;
+  let tong = gia + ship - giamgia;
+  document.getElementById("totalText").innerText = tong.toLocaleString() + " VNĐ";
+  return {ship, giamgia, tong};
+}
+
+document.getElementById("ship").onchange = tinhTien;
+document.getElementById("coupon").oninput = tinhTien;
+tinhTien();
+
+async function datHang() {
   let ten = document.getElementById("ten").value;
   let sdt = document.getElementById("sdt").value;
   let diachi = document.getElementById("diachi").value;
 
-  let ship = Number(document.getElementById("ship").value);
-  let coupon = document.getElementById("coupon").value;
-
-  let gia = 2500000;
-  let giamgia = 0;
-
-  // ví dụ đơn giản mã giảm giá
-  if (coupon === "SALE50") {
-    giamgia = 50000;
+  if (!ten || !sdt || !diachi) {
+    alert("Vui lòng nhập đầy đủ thông tin!");
+    return;
   }
 
-  let tong = gia + ship - giamgia;
-
+  let calc = tinhTien();
   let data = {
     ten: ten,
     sdt: sdt,
     diachi: diachi,
-    sanpham: "Áo thun",
+    sanpham: "Kính viễn vọng GENUO",
     gia: gia,
-    phivanchuyen: ship,
-    magiamgia: giamgia,
-    tong: tong,
+    phivanchuyen: calc.ship,
+    magiamgia: calc.giamgia,
+    tong: calc.tong,
     thanhtoan: document.getElementById("pay").value
   };
 
-  let res = await fetch("URL_WEB_APP_CUA_BAN", {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
+  try {
+    let res = await fetch("https://script.google.com/macros/s/AKfycbwoC8H-yRkVyz8cPiMDIecu63KO5-5uzkLvF3wuKJgnlw69pWo3yxQOGOm39fu8JdXt/exec", {
+      method: "POST",
+      mode: "no-cors",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "text/plain"
+      }
+    });
 
-  alert("Đặt hàng thành công!");
+    alert("Đặt hàng thành công!");
+    document.getElementById("ten").value = "";
+    document.getElementById("sdt").value = "";
+    document.getElementById("diachi").value = "";
+  } catch (err) {
+    alert("Lỗi gửi đơn!");
+    console.log(err);
+  }
 }
 </script>
 
