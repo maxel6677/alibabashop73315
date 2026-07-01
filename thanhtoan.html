@@ -172,13 +172,13 @@ button.btn-submit {
 </div>
 
 <script>
-const gia = 5.000;
+const gia = 5000;
 let map;
 let marker;
 let selectedCoords = "";
 
 function initMap() {
-  const defaultLoc = [10.762622, 106.660172]; // Tọa độ mẫu mặc định
+  const defaultLoc = [10,7283625, 107,1878281]; // Tọa độ mẫu mặc định
   
   // 1. Tạo lớp Bản đồ đường đi thông thường
   const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -248,7 +248,7 @@ function xacNhanToaDo() {
 function tinhTien() {
   let ship = Number(document.getElementById("ship").value);
   let coupon = document.getElementById("coupon").value;
-  let giamgia = (coupon === "SALE50") ? 50000 : 0;
+  let giamgia = (coupon === "SALE50") ? 500 : 0;
   let tong = gia + ship - giamgia;
   document.getElementById("totalText").innerText = tong.toLocaleString() + " VNĐ";
   return {ship, giamgia, tong};
