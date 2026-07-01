@@ -109,7 +109,6 @@ document.getElementById("coupon").oninput = tinhTien;
 tinhTien();
 
 async function datHang() {
-
   let ten = document.getElementById("ten").value;
   let sdt = document.getElementById("sdt").value;
   let diachi = document.getElementById("diachi").value;
@@ -134,18 +133,22 @@ async function datHang() {
   };
 
   try {
-    let res = await fetch("https://script.google.com/macros/s/AKfycbzyC-VfUY_xU6vjgiIigKlzckpN2NPPfZ0x3G25ESjvZlg8zjRPngcXQXIxTrcIcdh3/exec", {
+    // ĐÂY CHÍNH LÀ KHU VỰC ĐƯỢC THAY LINK MỚI VÀ SỬA LỖI ĐƯỜNG TRUYỀN
+    let res = await fetch("https://script.google.com/macros/s/AKfycbwoC8H-yRkVyz8cPiMDIecu63KO5-5uzkLvF3wuKJgnlw69pWo3yxQOGOm39fu8JdXt/exec", {
       method: "POST",
+      mode: "no-cors",
       body: JSON.stringify(data),
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "text/plain"
       }
     });
 
-    let text = await res.text();
-    console.log(text);
-
     alert("Đặt hàng thành công!");
+
+    // Xóa form sau khi đặt thành công
+    document.getElementById("ten").value = "";
+    document.getElementById("sdt").value = "";
+    document.getElementById("diachi").value = "";
 
   } catch (err) {
     alert("Lỗi gửi đơn!");
