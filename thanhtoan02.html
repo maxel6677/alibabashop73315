@@ -34,7 +34,6 @@ input, select {
   font-size: 14px;
 }
 
-/* Khung chứa ô địa chỉ và nút mở bản đồ */
 .diachi-container {
   display: flex;
   gap: 8px;
@@ -69,7 +68,7 @@ button.btn-submit {
   margin-top: 10px;
 }
 
-/* Giao diện khung cửa sổ Bản đồ Popup */
+/* Khung cửa sổ Bản đồ Popup */
 #mapModal {
   display: none;
   position: fixed;
@@ -82,16 +81,16 @@ button.btn-submit {
 }
 .modal-content {
   background-color: white;
-  margin: 10% auto;
+  margin: 8% auto;
   padding: 15px;
-  width: 90%;
+  width: 92%;
   max-width: 500px;
   border-radius: 10px;
   box-sizing: border-box;
 }
 #map {
   width: 100%;
-  height: 320px;
+  height: 350px;
   margin-top: 10px;
   border-radius: 6px;
 }
@@ -162,11 +161,11 @@ button.btn-submit {
 
 <div id="mapModal">
   <div class="modal-content">
-    <h3 style="margin-top:0;">📍 Chấm chọn vị trí giao hàng</h3>
-    <p style="font-size:12px; color:gray; margin:0;">Bấm vào bản đồ để di chuyển ghim đến vị trí chính xác của bạn.</p>
+    <h3 style="margin-top:0; margin-bottom:5px;">📍 Chọn vị trí giao hàng</h3>
+    <p style="font-size:12px; color:gray; margin:0;">Bấm nút lớp ở góc phải để đổi sang bản đồ Vệ tinh rõ nét.</p>
     <div id="map"></div>
     <div class="modal-buttons">
-      <button onclick="xacNhanToaDo()" style="background:green; color:white;">Xác nhận</button>
+      <button onclick="xacNhanToaDo()" style="background:green; color:white;">Xác nhận vị trí</button>
       <button onclick="dongBanDo()" style="background:red; color:white;">Hủy</button>
     </div>
   </div>
@@ -178,29 +177,44 @@ let map;
 let marker;
 let selectedCoords = "";
 
-// Khởi tạo bản đồ tự do (Mặc định tâm ở Việt Nam)
 function initMap() {
-  const defaultLoc = [10.762622, 106.660172]; // Tọa độ mặc định TP.HCM
+  const defaultLoc = [10.762622, 106.660172]; // Tọa độ mẫu mặc định
   
-  map = L.map('map').setView(defaultLoc, 13);
+  // 1. Tạo lớp Bản đồ đường đi thông thường
+  const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap'
+  });
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
+  // 2. Tạo lớp Bản đồ Vệ tinh siêu nét (Esri World Imagery)
+  const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri'
+  });
 
-  // Tạo ghim có thể kéo thả
+  // Khởi tạo bản đồ mặc định hiển thị chế độ vệ tinh cho dễ nhìn
+  map = L.map('map', {
+    center: defaultLoc,
+    zoom: 14,
+    layers: [satelliteLayer] // Mặc định mở ra là vệ tinh luôn
+  });
+
+  // Tạo menu nút bấm đổi chế độ ở góc phải
+  const baseMaps = {
+    "🗺️ Bản đồ thường": streetLayer,
+    "🛰️ Bản đồ vệ tinh": satelliteLayer
+  };
+  L.control.layers(baseMaps).addTo(map);
+
+  // Tạo ghim di động
   marker = L.marker(defaultLoc, { draggable: true }).addTo(map);
-
-  // Lưu tọa độ mặc định ban đầu
   luuToaDo(defaultLoc[0], defaultLoc[1]);
 
-  // Click vào điểm bất kỳ trên bản đồ để dời ghim
+  // Click chọn điểm mới trên bản đồ
   map.on('click', function(e) {
     marker.setLatLng(e.latlng);
     luuToaDo(e.latlng.lat, e.latlng.lng);
   });
 
-  // Sự kiện khi người dùng kéo thả ghim
+  // Kéo thả ghim
   marker.on('dragend', function(e) {
     let position = marker.getLatLng();
     luuToaDo(position.lat, position.lng);
@@ -213,12 +227,9 @@ function luuToaDo(lat, lng) {
 
 function moBanDo() {
   document.getElementById("mapModal").style.display = "block";
-  
-  // Khởi tạo bản đồ lần đầu tiên khi mở popup
   if (!map) {
     initMap();
   } else {
-    // Cập nhật lại kích thước tránh lỗi hiển thị xám khi nằm trong popup ẩn
     setTimeout(() => {
       map.invalidateSize();
     }, 200);
