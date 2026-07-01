@@ -31,7 +31,6 @@ input, select {
   font-size: 14px;
 }
 
-/* Khung chứa ô địa chỉ và nút định vị */
 .diachi-container {
   display: flex;
   gap: 8px;
@@ -50,6 +49,7 @@ input, select {
   border-radius: 6px;
   font-size: 14px;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 button.btn-submit {
@@ -82,7 +82,7 @@ button.btn-submit:hover {
   
   <div class="diachi-container">
     <input id="diachi" placeholder="Địa chỉ hoặc Tọa độ nhận hàng">
-    <button type="button" class="btn-gps" onclick="layViTriMoi()">📍 Định vị</button>
+    <button type="button" class="btn-gps" onclick="layViTriSieuToc()">📍 Định vị</button>
   </div>
 </div>
 
@@ -123,24 +123,31 @@ button.btn-submit:hover {
 <script>
 const gia = 2500000;
 
-// Hàm định vị tự động lấy tọa độ mà KHÔNG CẦN GOOGLE MAPS
-function layViTriMoi() {
-  if (navigator.geolocation) {
-    document.getElementById("diachi").value = "Đang quét định vị...";
-    navigator.geolocation.getCurrentPosition(
-      function(position) {
-        let lat = position.coords.latitude.toFixed(6);
-        let lng = position.coords.longitude.toFixed(6);
-        // Điền thẳng tọa độ vào ô nhập liệu
-        document.getElementById("diachi").value = lat + ", " + lng;
-      }, 
-      function(error) {
-        alert("Không thể lấy vị trí. Vui lòng cấp quyền truy cập vị trí cho trình duyệt hoặc tự gõ địa chỉ nhé!");
-        document.getElementById("diachi").value = "";
-      }
-    );
-  } else {
-    alert("Trình duyệt của bạn không hỗ trợ định vị GPS.");
+// Hàm quét vị trí bằng mạng Internet - Chỉ mất nửa giây
+async function layViTriSieuToc() {
+  let btn = document.querySelector(".btn-gps");
+  let inputDiaChi = document.getElementById("diachi");
+  
+  inputDiaChi.value = "Đang quét nhanh...";
+  btn.disabled = true;
+
+  try {
+    // Gọi dịch vụ lấy tọa độ qua IP mạng công cộng công nghệ cao
+    let response = await fetch("https://ipapi.co/json/");
+    let data = await response.json();
+    
+    if (data.latitude && data.longitude) {
+      // Điền tọa độ kèm tên thành phố/quốc gia cho trực quan
+      inputDiaChi.value = data.latitude + ", " + data.longitude + " (" + data.city + ")";
+    } else {
+      inputDiaChi.value = "";
+      alert("Không phản hồi tọa độ, vui lòng tự nhập địa chỉ.");
+    }
+  } catch (error) {
+    inputDiaChi.value = "";
+    alert("Lỗi đường truyền định vị nhanh. Vui lòng tự nhập địa chỉ.");
+  } finally {
+    btn.disabled = false;
   }
 }
 
