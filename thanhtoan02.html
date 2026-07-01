@@ -1,47 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Thanh toán</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f5f5f5;
+  padding: 20px;
+}
+
+.box {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: green;
+  color: white;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+button:hover {
+  background: darkgreen;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🧾 Thanh toán đơn hàng</h2>
+
+<div class="box">
+  <h3>📍 Thông tin nhận hàng</h3>
+  <input id="ten" placeholder="Tên người nhận">
+  <input id="sdt" placeholder="Số điện thoại">
+  <input id="diachi" placeholder="Địa chỉ">
+</div>
+
+<div class="box">
+  <h3>📦 Sản phẩm</h3>
+  <p><b>Kính viễn vọng GENUO</b></p>
+  <p>Giá: 2.500.000 VNĐ</p>
+</div>
+
+<div class="box">
+  <h3>🚚 Vận chuyển</h3>
+  <select id="ship">
+    <option value="30000">Tiêu chuẩn - 30.000</option>
+    <option value="50000">Nhanh - 50.000</option>
+  </select>
+</div>
+
+<div class="box">
+  <h3>🎟 Mã giảm giá</h3>
+  <input id="coupon" placeholder="Nhập mã (SALE50)">
+</div>
+
+<div class="box">
+  <h3>💳 Thanh toán</h3>
+  <select id="pay">
+    <option value="COD">Thanh toán khi nhận hàng</option>
+    <option value="BANK">Chuyển khoản</option>
+  </select>
+</div>
+
+<div class="box">
+  <h3>💰 Tổng tiền</h3>
+  <p id="totalText">Đang tính...</p>
+</div>
+
+<button onclick="datHang()">ĐẶT HÀNG</button>
+
 <script>
-let isSending = false;
+const gia = 2500000;
+
+function tinhTien() {
+  let ship = Number(document.getElementById("ship").value);
+  let coupon = document.getElementById("coupon").value;
+
+  let giamgia = (coupon === "SALE50") ? 50000 : 0;
+
+  let tong = gia + ship - giamgia;
+
+  document.getElementById("totalText").innerText =
+    tong.toLocaleString() + " VNĐ";
+
+  return {ship, giamgia, tong};
+}
+
+document.getElementById("ship").onchange = tinhTien;
+document.getElementById("coupon").oninput = tinhTien;
+
+tinhTien();
 
 async function datHang() {
 
-  if (isSending) return; // chặn spam
-  isSending = true;
+  let ten = document.getElementById("ten").value;
+  let sdt = document.getElementById("sdt").value;
+  let diachi = document.getElementById("diachi").value;
+
+  if (!ten || !sdt || !diachi) {
+    alert("Vui lòng nhập đầy đủ thông tin!");
+    return;
+  }
+
+  let calc = tinhTien();
+
+  let data = {
+    ten: ten,
+    sdt: sdt,
+    diachi: diachi,
+    sanpham: "Kính viễn vọng GENUO",
+    gia: gia,
+    phivanchuyen: calc.ship,
+    magiamgia: calc.giamgia,
+    tong: calc.tong,
+    thanhtoan: document.getElementById("pay").value
+  };
 
   try {
-    let ten = document.getElementById("ten").value.trim();
-    let sdt = document.getElementById("sdt").value.trim();
-    let diachi = document.getElementById("diachi").value.trim();
-
-    if (!ten || !sdt || !diachi) {
-      alert("Vui lòng nhập đầy đủ thông tin!");
-      isSending = false;
-      return;
-    }
-
-    let ship = Number(document.getElementById("ship").value);
-    let coupon = document.getElementById("coupon").value.trim();
-
-    let gia = 2500000;
-    let giamgia = 0;
-
-    if (coupon === "SALE50") {
-      giamgia = 50000;
-    }
-
-    let tong = gia + ship - giamgia;
-
-    let data = {
-      ten: ten,
-      sdt: sdt,
-      diachi: diachi,
-      sanpham: "Kính viễn vọng GENUO",
-      gia: gia,
-      phivanchuyen: ship,
-      magiamgia: giamgia,
-      tong: tong,
-      thanhtoan: document.getElementById("pay").value
-    };
-
-    let res = await fetch("https://script.google.com/macros/s/AKfycbz9eLJifdxW_fOdzeIOYfsfVhgdAehTcnHfFYUgJdb4nVLyHRx4nUc9tF0fnKBkykahAw/exec", {
+    let res = await fetch("https://script.google.com/macros/s/AKfycbyK4gPa08Ad9pdRRH9yBeNwMkPlE-_EeGJ1rRbok0FeuJtFgtWfTVY0FsuA_rcLpu9TZQ/exec", {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
@@ -50,16 +143,16 @@ async function datHang() {
     });
 
     let text = await res.text();
-
-    console.log("Server response:", text);
+    console.log(text);
 
     alert("Đặt hàng thành công!");
 
   } catch (err) {
-    console.error(err);
-    alert("Lỗi gửi đơn! Kiểm tra lại kết nối hoặc URL Web App.");
+    alert("Lỗi gửi đơn!");
+    console.log(err);
   }
-
-  isSending = false;
 }
 </script>
+
+</body>
+</html>
