@@ -41,7 +41,7 @@ async function datHang() {
       thanhtoan: document.getElementById("pay").value
     };
 
-    let res = await fetch("URL_WEB_APP_CUA_BAN", {
+    let res = await fetch("https://script.google.com/macros/s/AKfycbz9eLJifdxW_fOdzeIOYfsfVhgdAehTcnHfFYUgJdb4nVLyHRx4nUc9tF0fnKBkykahAw/exec", {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
