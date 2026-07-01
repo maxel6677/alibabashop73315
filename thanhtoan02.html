@@ -1,100 +1,65 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>Thanh toán</title>
-  <style>
-    body { font-family: Arial; background:#f5f5f5; padding:20px; }
-    .box { background:#fff; padding:15px; margin-bottom:10px; border-radius:8px; }
-    input, select { width:100%; padding:8px; margin-top:5px; }
-    button { padding:10px; width:100%; background:green; color:#fff; border:none; cursor:pointer; }
-    button:hover { background:darkgreen; }
-  </style>
-</head>
-
-<body>
-
-<h2>Thanh toán</h2>
-
-<div class="box">
-  <h3>Thông tin nhận hàng</h3>
-  <input id="ten" placeholder="Tên">
-  <input id="sdt" placeholder="SĐT">
-  <input id="diachi" placeholder="Địa chỉ">
-</div>
-
-<div class="box">
-  <h3>Sản phẩm</h3>
-  <p>Tên sản phẩm: Kính viễn vọng GENUO </p>
-  <p>Giá: 2.500.000 VNĐ</p>
-</div>
-
-<div class="box">
-  <h3>Vận chuyển</h3>
-  <select id="ship">
-    <option value="30000">Giao tiêu chuẩn - 30.000</option>
-    <option value="50000">Nhanh - 50.000</option>
-  </select>
-</div>
-
-<div class="box">
-  <h3>Mã giảm giá</h3>
-  <input id="coupon" placeholder="Nhập mã giảm giá">
-</div>
-
-<div class="box">
-  <h3>Thanh toán</h3>
-  <select id="pay">
-    <option value="COD">Thanh toán khi nhận hàng</option>
-    <option value="BANK">Chuyển khoản</option>
-  </select>
-</div>
-
-<button onclick="datHang()">ĐẶT HÀNG</button>
-
 <script>
+let isSending = false;
+
 async function datHang() {
 
-  let ten = document.getElementById("ten").value;
-  let sdt = document.getElementById("sdt").value;
-  let diachi = document.getElementById("diachi").value;
+  if (isSending) return; // chặn spam
+  isSending = true;
 
-  let ship = Number(document.getElementById("ship").value);
-  let coupon = document.getElementById("coupon").value;
+  try {
+    let ten = document.getElementById("ten").value.trim();
+    let sdt = document.getElementById("sdt").value.trim();
+    let diachi = document.getElementById("diachi").value.trim();
 
-  let gia = 2500000;
-  let giamgia = 0;
+    if (!ten || !sdt || !diachi) {
+      alert("Vui lòng nhập đầy đủ thông tin!");
+      isSending = false;
+      return;
+    }
 
-  // ví dụ đơn giản mã giảm giá
-  if (coupon === "SALE50") {
-    giamgia = 50000;
+    let ship = Number(document.getElementById("ship").value);
+    let coupon = document.getElementById("coupon").value.trim();
+
+    let gia = 2500000;
+    let giamgia = 0;
+
+    if (coupon === "SALE50") {
+      giamgia = 50000;
+    }
+
+    let tong = gia + ship - giamgia;
+
+    let data = {
+      ten: ten,
+      sdt: sdt,
+      diachi: diachi,
+      sanpham: "Kính viễn vọng GENUO",
+      gia: gia,
+      phivanchuyen: ship,
+      magiamgia: giamgia,
+      tong: tong,
+      thanhtoan: document.getElementById("pay").value
+    };
+
+    let res = await fetch("URL_WEB_APP_CUA_BAN", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    let text = await res.text();
+
+    console.log("Server response:", text);
+
+    alert("Đặt hàng thành công!");
+
+  } catch (err) {
+    console.error(err);
+    alert("Lỗi gửi đơn! Kiểm tra lại kết nối hoặc URL Web App.");
   }
 
-  let tong = gia + ship - giamgia;
-
-  let data = {
-    ten: ten,
-    sdt: sdt,
-    diachi: diachi,
-    sanpham: "Áo thun",
-    gia: gia,
-    phivanchuyen: ship,
-    magiamgia: giamgia,
-    tong: tong,
-    thanhtoan: document.getElementById("pay").value
-  };
-
-  let res = await fetch("URL_WEB_APP_CUA_BAN", {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
-
-  alert("Đặt hàng thành công!");
+  isSending = false;
 }
 </script>
-
-</body>
-</html>
