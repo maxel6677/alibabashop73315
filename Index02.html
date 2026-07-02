@@ -1,80 +1,110 @@
-<!-- Nút mở -->
-<button onclick="hienThongTin()">📱 Thông tin thiết bị</button>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cờ vua AI</title>
 
-<!-- Popup -->
-<div id="deviceModal" style="
-display:none;
-position:fixed;
-left:0;
-top:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.5);
-z-index:9999;
-">
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#222;
+    color:white;
+    text-align:center;
+}
 
-<div style="
-background:#fff;
-width:90%;
-max-width:420px;
-margin:10% auto;
-padding:20px;
-border-radius:12px;
-box-shadow:0 0 15px rgba(0,0,0,.3);
-">
+header{
+    background:#111;
+    padding:15px;
+    font-size:28px;
+    font-weight:bold;
+}
 
-<h2 style="margin-top:0;">📱 Thông tin thiết bị</h2>
+#board{
+    width:400px;
+    height:400px;
+    margin:20px auto;
+    display:grid;
+    grid-template-columns:repeat(8,1fr);
+    border:5px solid #333;
+}
 
-<p><b>🌐 Trình duyệt:</b><br><span id="browser"></span></p>
+.square{
+    width:50px;
+    height:50px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:34px;
+    cursor:pointer;
+}
 
-<p><b>💻 Hệ điều hành:</b><br><span id="platform"></span></p>
+.white{
+    background:#f0d9b5;
+}
 
-<p><b>🧠 CPU:</b><br><span id="cpu"></span></p>
+.black{
+    background:#b58863;
+}
 
-<p><b>💾 RAM:</b><br><span id="ram"></span></p>
+.panel{
+    margin-top:15px;
+}
 
-<p><b>🖥️ Độ phân giải:</b><br><span id="screenSize"></span></p>
+button{
+    padding:10px 20px;
+    margin:5px;
+    border:none;
+    border-radius:8px;
+    background:#2196F3;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
 
-<p><b>🌍 Ngôn ngữ:</b><br><span id="language"></span></p>
+button:hover{
+    background:#1976D2;
+}
 
-<button onclick="dongThongTin()"
-style="
-width:100%;
-padding:12px;
-background:#28a745;
-color:white;
-border:none;
-border-radius:8px;
-font-size:16px;
-">
-Đóng
-</button>
+#status{
+    margin-top:10px;
+    font-size:18px;
+}
+</style>
+</head>
 
+<body>
+
+<header>♟️ Cờ vua AI</header>
+
+<div id="board"></div>
+
+<div class="panel">
+<button>▶ Chơi với AI</button>
+<button>👥 Hai người</button>
+<button>🔄 Chơi lại</button>
 </div>
-</div>
+
+<p id="status">Lượt: Trắng</p>
 
 <script>
-function hienThongTin(){
+const board=document.getElementById("board");
 
-document.getElementById("deviceModal").style.display="block";
+for(let y=0;y<8;y++){
 
-browser.innerText=navigator.userAgent;
-platform.innerText=navigator.platform;
-language.innerText=navigator.language;
+for(let x=0;x<8;x++){
 
-cpu.innerText=navigator.hardwareConcurrency
-? navigator.hardwareConcurrency+" lõi"
-: "Không hỗ trợ";
+const cell=document.createElement("div");
 
-ram.innerText=navigator.deviceMemory
-? navigator.deviceMemory+" GB"
-: "Không hỗ trợ";
+cell.className="square "+((x+y)%2==0?"white":"black");
 
-screenSize.innerText=screen.width+" × "+screen.height;
+board.appendChild(cell);
 
 }
 
-function dongThongTin(){
-document.getElementById("deviceModal").style.display="none";
 }
 </script>
+
+</body>
+</html>
