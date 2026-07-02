@@ -102,6 +102,8 @@ const pieces = [
 ["♖","♘","♗","♕","♔","♗","♘","♖"]
 ];
 
+let dragged = null;
+
 for(let y=0;y<8;y++){
 
     for(let x=0;x<8;x++){
@@ -111,6 +113,40 @@ for(let y=0;y<8;y++){
         cell.className="square "+((x+y)%2==0?"white":"black");
 
         cell.innerHTML=pieces[y][x];
+
+        cell.draggable=true;
+
+        cell.addEventListener("dragstart",function(){
+
+            if(cell.innerHTML==""){
+                return;
+            }
+
+            dragged=cell;
+
+        });
+
+        cell.addEventListener("dragover",function(e){
+
+            e.preventDefault();
+
+        });
+
+        cell.addEventListener("drop",function(e){
+
+            e.preventDefault();
+
+            if(dragged==null) return;
+
+            if(cell===dragged) return;
+
+            cell.innerHTML=dragged.innerHTML;
+
+            dragged.innerHTML="";
+
+            dragged=null;
+
+        });
 
         board.appendChild(cell);
 
