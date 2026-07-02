@@ -102,57 +102,61 @@ const pieces = [
 ["♖","♘","♗","♕","♔","♗","♘","♖"]
 ];
 
-let dragged = null;
+let selectedCell = null;
 
-for(let y=0;y<8;y++){
+function renderBoard(){
+    board.innerHTML = "";
 
-    for(let x=0;x<8;x++){
+    for(let y=0;y<8;y++){
+        for(let x=0;x<8;x++){
 
-        const cell=document.createElement("div");
+            const cell = document.createElement("div");
 
-        cell.className="square "+((x+y)%2==0?"white":"black");
+            cell.className = "square " + ((x+y)%2==0 ? "white" : "black");
 
-        cell.innerHTML=pieces[y][x];
+            cell.innerHTML = pieces[y][x];
 
-        cell.draggable=true;
+            cell.dataset.row = y;
+            cell.dataset.col = x;
 
-        cell.addEventListener("dragstart",function(){
+            cell.addEventListener("click", function(){
 
-            if(cell.innerHTML==""){
-                return;
-            }
+                // CHỌN QUÂN
+                if(selectedCell === null){
 
-            dragged=cell;
+                    if(cell.innerHTML !== ""){
+                        selectedCell = cell;
+                        cell.style.outline = "3px solid yellow";
+                    }
 
-        });
+                } 
+                // CHỌN Ô ĐÍCH
+                else {
 
-        cell.addEventListener("dragover",function(e){
+                    let fromY = selectedCell.dataset.row;
+                    let fromX = selectedCell.dataset.col;
 
-            e.preventDefault();
+                    let toY = cell.dataset.row;
+                    let toX = cell.dataset.col;
 
-        });
+                    // di chuyển
+                    pieces[toY][toX] = pieces[fromY][fromX];
+                    pieces[fromY][fromX] = "";
 
-        cell.addEventListener("drop",function(e){
+                    selectedCell.style.outline = "none";
+                    selectedCell = null;
 
-            e.preventDefault();
+                    renderBoard();
+                }
 
-            if(dragged==null) return;
+            });
 
-            if(cell===dragged) return;
-
-            cell.innerHTML=dragged.innerHTML;
-
-            dragged.innerHTML="";
-
-            dragged=null;
-
-        });
-
-        board.appendChild(cell);
-
+            board.appendChild(cell);
+        }
     }
-
 }
+
+renderBoard();
 </script>
 
 </body>
