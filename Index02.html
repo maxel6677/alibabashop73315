@@ -89,19 +89,32 @@ button:hover{
 <p id="status">Lượt: Trắng</p>
 
 <script>
-const board=document.getElementById("board");
+const board = document.getElementById("board");
+
+const pieces = [
+["♜","♞","♝","♛","♚","♝","♞","♜"],
+["♟","♟","♟","♟","♟","♟","♟","♟"],
+["","","","","","","",""],
+["","","","","","","",""],
+["","","","","","","",""],
+["","","","","","","",""],
+["♙","♙","♙","♙","♙","♙","♙","♙"],
+["♖","♘","♗","♕","♔","♗","♘","♖"]
+];
 
 for(let y=0;y<8;y++){
 
-for(let x=0;x<8;x++){
+    for(let x=0;x<8;x++){
 
-const cell=document.createElement("div");
+        const cell=document.createElement("div");
 
-cell.className="square "+((x+y)%2==0?"white":"black");
+        cell.className="square "+((x+y)%2==0?"white":"black");
 
-board.appendChild(cell);
+        cell.innerHTML=pieces[y][x];
 
-}
+        board.appendChild(cell);
+
+    }
 
 }
 </script>
