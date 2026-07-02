@@ -65,7 +65,7 @@ align-items:center;
 z-index:99999;
 ">
 
-<h2>⏳ Đang tải Alibabashop73315...</h2>
+<h2>⏳ Đang tải ...</h2>
 
 <div style="
 width:250px;
@@ -87,6 +87,46 @@ transition:width 0.1s linear;
 
 <p id="loadingText">0%</p>
 
+</div>
+<div id="loginScreen" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:white;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:99998;
+">
+
+<div style="
+background:#fff;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.3);
+text-align:center;
+width:300px;
+">
+
+<h2>🔒 Đăng nhập</h2>
+
+<input id="password" type="password"
+placeholder="Nhập mật khẩu"
+style="
+width:90%;
+padding:10px;
+margin:10px 0;
+">
+
+<br>
+
+<button onclick="dangNhap()">Vào web</button>
+
+<p id="loginError" style="color:red;"></p>
+
+</div>
 </div>
 <button onclick="toggleMenu()">☰ Menu</button>
 
@@ -247,6 +287,24 @@ document.getElementById("loadingScreen").style.display = "none";
 }
 
 },100);
+const MAT_KHAU = "123456";
+
+function dangNhap(){
+
+let mk = document.getElementById("password").value;
+
+if(mk === MAT_KHAU){
+
+document.getElementById("loginScreen").style.display = "none";
+
+}else{
+
+document.getElementById("loginError").innerText =
+"Sai mật khẩu!";
+
+}
+
+}
 </script>
 
   </body>  
