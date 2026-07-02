@@ -1,97 +1,6 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cờ vua Alibaba</title>
-
-<style>
-body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#222;
-    color:white;
-    text-align:center;
-}
-
-header{
-    background:#111;
-    padding:15px;
-    font-size:28px;
-    font-weight:bold;
-}
-
-#board{
-    width:400px;
-    height:400px;
-    margin:20px auto;
-    display:grid;
-    grid-template-columns:repeat(8,1fr);
-    border:5px solid #333;
-}
-
-.square{
-    width:50px;
-    height:50px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:34px;
-    cursor:pointer;
-}
-
-.white{
-    background:#f0d9b5;
-}
-
-.black{
-    background:#b58863;
-}
-
-.panel{
-    margin-top:15px;
-}
-
-button{
-    padding:10px 20px;
-    margin:5px;
-    border:none;
-    border-radius:8px;
-    background:#2196F3;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#1976D2;
-}
-
-#status{
-    margin-top:10px;
-    font-size:18px;
-}
-</style>
-</head>
-
-<body>
-
-<header>♟️ Cờ vua AI</header>
-
-<div id="board"></div>
-
-<div class="panel">
-<button>▶ Chơi với AI</button>
-<button>👥 Hai người</button>
-<button>🔄 Chơi lại</button>
-</div>
-
-<p id="status">Lượt: Trắng</p>
-
-<script>
 const board = document.getElementById("board");
 
-const pieces = [
+let pieces = [
 ["♜","♞","♝","♛","♚","♝","♞","♜"],
 ["♟","♟","♟","♟","♟","♟","♟","♟"],
 ["","","","","","","",""],
@@ -102,9 +11,97 @@ const pieces = [
 ["♖","♘","♗","♕","♔","♗","♘","♖"]
 ];
 
-let selectedCell = null;
+let selected = null;
+let turn = "white";
 
-function renderBoard(){
+function isWhite(piece){
+    return "♙♖♘♗♕♔".includes(piece);
+}
+
+function isBlack(piece){
+    return "♟♜♞♝♛♚".includes(piece);
+}
+function isPathClear(fromY, fromX, toY, toX){
+
+    let dy = Math.sign(toY - fromY);
+    let dx = Math.sign(toX - fromX);
+
+    let y = fromY + dy;
+    let x = fromX + dx;
+
+    while(y !== toY || x !== toX){
+
+        if(pieces[y][x] !== ""){
+            return false; // có quân chặn
+        }
+
+        y += dy;
+        x += dx;
+    }
+
+    return true;
+}
+function canMove(fromY, fromX, toY, toX){
+
+    let p = pieces[fromY][fromX];
+    let target = pieces[toY][toX];
+
+    if(p === "") return false;
+
+    // không ăn quân cùng màu
+    if(target !== ""){
+        if(isWhite(p) && isWhite(target)) return false;
+        if(isBlack(p) && isBlack(target)) return false;
+    }
+
+    let dy = toY - fromY;
+    let dx = toX - fromX;
+
+    // ♙ TỐT
+    if(p === "♙"){
+        if(dx === 0 && dy === -1 && target === "") return true;
+        if(dx === 0 && dy === -2 && fromY === 6 && target === "") return true;
+        if(Math.abs(dx) === 1 && dy === -1 && target !== "") return true;
+        return false;
+    }
+
+    if(p === "♟"){
+        if(dx === 0 && dy === 1 && target === "") return true;
+        if(dx === 0 && dy === 2 && fromY === 1 && target === "") return true;
+        if(Math.abs(dx) === 1 && dy === 1 && target !== "") return true;
+        return false;
+    }
+
+    // ♘ MÃ
+    if(p === "♘" || p === "♞"){
+        return (Math.abs(dx) === 2 && Math.abs(dy) === 1) ||
+               (Math.abs(dx) === 1 && Math.abs(dy) === 2);
+    }
+
+    // ♗ TƯỢNG
+    if(p === "♗" || p === "♝"){
+        return Math.abs(dx) === Math.abs(dy);
+    }
+
+    // ♖ XE
+    if(p === "♖" || p === "♜"){
+        return dx === 0 || dy === 0;
+    }
+
+    // ♕ HẬU
+    if(p === "♕" || p === "♛"){
+        return dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy);
+    }
+
+    // ♔ VUA
+    if(p === "♔" || p === "♚"){
+        return Math.abs(dx) <= 1 && Math.abs(dy) <= 1;
+    }
+
+    return false;
+}
+
+function render(){
     board.innerHTML = "";
 
     for(let y=0;y<8;y++){
@@ -116,48 +113,39 @@ function renderBoard(){
 
             cell.innerHTML = pieces[y][x];
 
-            cell.dataset.row = y;
-            cell.dataset.col = x;
+            cell.onclick = function(){
 
-            cell.addEventListener("click", function(){
+                let piece = pieces[y][x];
 
-                // CHỌN QUÂN
-                if(selectedCell === null){
+                // chọn quân
+                if(selected === null){
+                    if(piece === "") return;
 
-                    if(cell.innerHTML !== ""){
-                        selectedCell = cell;
-                        cell.style.outline = "3px solid yellow";
-                    }
+                    if(turn === "white" && !isWhite(piece)) return;
+                    if(turn === "black" && !isBlack(piece)) return;
 
-                } 
-                // CHỌN Ô ĐÍCH
-                else {
-
-                    let fromY = selectedCell.dataset.row;
-                    let fromX = selectedCell.dataset.col;
-
-                    let toY = cell.dataset.row;
-                    let toX = cell.dataset.col;
-
-                    // di chuyển
-                    pieces[toY][toX] = pieces[fromY][fromX];
-                    pieces[fromY][fromX] = "";
-
-                    selectedCell.style.outline = "none";
-                    selectedCell = null;
-
-                    renderBoard();
+                    selected = [y,x];
+                    cell.style.outline = "3px solid yellow";
+                    return;
                 }
 
-            });
+                let [sy,sx] = selected;
+
+                if(canMove(sy,sx,y,x)){
+
+                    pieces[y][x] = pieces[sy][sx];
+                    pieces[sy][sx] = "";
+
+                    turn = (turn === "white") ? "black" : "white";
+                }
+
+                selected = null;
+                render();
+            };
 
             board.appendChild(cell);
         }
     }
 }
 
-renderBoard();
-</script>
-
-</body>
-</html>
+render();
