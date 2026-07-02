@@ -1,1 +1,45 @@
-ijshdh
+<button onclick="hienThongTin()">📱 Thông tin thiết bị</button>
+<div id="deviceBox" style="display:none;background:white;padding:15px;margin:15px auto;max-width:350px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.2);text-align:left;">
+
+<h3>📱 Thông tin thiết bị</h3>
+
+<p><b>🖥️ Trình duyệt:</b> <span id="browser"></span></p>
+<p><b>🌐 Ngôn ngữ:</b> <span id="language"></span></p>
+<p><b>💾 RAM:</b> <span id="ram"></span></p>
+<p><b>🧠 CPU:</b> <span id="cpu"></span></p>
+<p><b>📺 Màn hình:</b> <span id="screenSize"></span></p>
+
+<button onclick="dongThongTin()">Đóng</button>
+
+</div>
+
+<script>
+function hienThongTin(){
+
+document.getElementById("deviceBox").style.display="block";
+
+document.getElementById("browser").innerText =
+navigator.userAgent;
+
+document.getElementById("language").innerText =
+navigator.language;
+
+document.getElementById("ram").innerText =
+navigator.deviceMemory
+? navigator.deviceMemory + " GB"
+: "Không hỗ trợ";
+
+document.getElementById("cpu").innerText =
+navigator.hardwareConcurrency
+? navigator.hardwareConcurrency + " lõi"
+: "Không hỗ trợ";
+
+document.getElementById("screenSize").innerText =
+screen.width + " × " + screen.height;
+
+}
+
+function dongThongTin(){
+document.getElementById("deviceBox").style.display="none";
+}
+</script>
